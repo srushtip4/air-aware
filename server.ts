@@ -1,12 +1,11 @@
 import 'dotenv/config';
 import express from 'express';
 import path from 'node:path';
-import { createServer as createViteServer } from 'vite';
 import { createAirAwareApp } from './src/app/createApp';
 import { loadEnvConfig } from './src/lib/config';
 import { createServerLogger } from './src/lib/security';
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 async function startServer(): Promise<void> {
   const logger = createServerLogger();
@@ -14,13 +13,18 @@ async function startServer(): Promise<void> {
   const app = createAirAwareApp({ envConfig, logger });
 
   if (envConfig.nodeEnv !== 'production') {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
   } else {
-    const distDir = path.resolve(import.meta.dirname, 'dist');
+    const baseDir =
+      path.basename(import.meta.dirname) === 'dist-server'
+        ? path.resolve(import.meta.dirname, '..')
+        : import.meta.dirname;
+    const distDir = path.resolve(baseDir, 'dist');
     app.use(express.static(distDir));
     app.get('*', (_req, res) => {
       res.sendFile(path.join(distDir, 'index.html'));

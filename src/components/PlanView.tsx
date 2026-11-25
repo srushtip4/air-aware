@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { translations, type Language } from '../i18n/translations';
 import { estimateActionImpact } from '../lib/impact';
+import { FactorBadge } from './FactorBadge';
 import type {
   RecommendationItem,
   RecommendationPlan,
@@ -29,8 +30,8 @@ export const PlanView: React.FC<PlanViewProps> = ({ plan, profile, language }) =
 
   if (!plan) {
     return (
-      <main id="main-content" className="max-w-5xl mx-auto px-4 py-16 text-center">
-        <p className="text-slate-500">No active clean-air plan generated yet. Please check live AQI first.</p>
+      <main id="main-content" tabIndex={-1} className="max-w-5xl mx-auto px-4 py-16 text-center focus:outline-none">
+        <p className="text-slate-600 dark:text-slate-400">No active clean-air plan generated yet. Please check live AQI first.</p>
       </main>
     );
   }
@@ -44,6 +45,32 @@ export const PlanView: React.FC<PlanViewProps> = ({ plan, profile, language }) =
     const impactEstimate = item.impactActionId
       ? estimateActionImpact(item.impactActionId, profile)
       : null;
+
+    const allMetrics = impactEstimate
+      ? [
+          impactEstimate.avoidedCo2eKgPerWeek,
+          impactEstimate.avoidedPmGramsPerWeek,
+          impactEstimate.householdExposureReductionPct,
+        ]
+      : [];
+
+    const uniqueCitations = Array.from(
+      new Set(
+        allMetrics
+          .filter((m) => m.value !== null && m.sourceCitation)
+          .map((m) => m.sourceCitation as string),
+      ),
+    );
+    const uniqueNotes = Array.from(
+      new Set(
+        allMetrics
+          .filter((m) => m.value !== null && m.note)
+          .map((m) => m.note as string),
+      ),
+    );
+    const uniqueAssumptions = Array.from(
+      new Set(allMetrics.flatMap((m) => m.assumptions)),
+    );
 
     return (
       <div
@@ -87,7 +114,7 @@ export const PlanView: React.FC<PlanViewProps> = ({ plan, profile, language }) =
         </div>
 
         <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-          <span className="text-xs text-slate-500 italic">
+          <span className="text-xs text-slate-600 dark:text-slate-400 italic">
             Rationale: {item.rationale}
           </span>
 
@@ -95,16 +122,18 @@ export const PlanView: React.FC<PlanViewProps> = ({ plan, profile, language }) =
             <button
               onClick={() => toggleAccordion(item.id)}
               aria-expanded={isExpanded}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+              aria-controls={`calc-panel-${item.id}`}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
             >
               <span>{t.howCalculated}</span>
-              {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              {isExpanded ? <ChevronUp className="w-4 h-4" aria-hidden="true" /> : <ChevronDown className="w-4 h-4" aria-hidden="true" />}
             </button>
           )}
         </div>
 
         {isExpanded && impactEstimate && (
           <div
+            id={`calc-panel-${item.id}`}
             tabIndex={0}
             className="mt-4 bg-slate-50 dark:bg-slate-800/60 p-5 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3 text-xs text-slate-700 dark:text-slate-300"
           >
@@ -112,43 +141,84 @@ export const PlanView: React.FC<PlanViewProps> = ({ plan, profile, language }) =
               {t.assumptions}
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                <div className="text-slate-500 mb-0.5">CO2e Reduction</div>
+              <div className="bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700 space-y-1.5">
+                <div className="text-slate-500">CO2e Reduction</div>
                 <div className="font-bold text-slate-900 dark:text-slate-100">
                   {impactEstimate.avoidedCo2eKgPerWeek.value !== null
                     ? `${impactEstimate.avoidedCo2eKgPerWeek.value} ${impactEstimate.avoidedCo2eKgPerWeek.unit}`
                     : impactEstimate.avoidedCo2eKgPerWeek.unavailableReason}
                 </div>
+                <FactorBadge
+                  kind={impactEstimate.avoidedCo2eKgPerWeek.kind}
+                  confidence={impactEstimate.avoidedCo2eKgPerWeek.confidence}
+                  compact
+                />
               </div>
-              <div className="bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                <div className="text-slate-500 mb-0.5">PM2.5 Reduction</div>
+              <div className="bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700 space-y-1.5">
+                <div className="text-slate-500">PM2.5 Reduction</div>
                 <div className="font-bold text-slate-900 dark:text-slate-100">
                   {impactEstimate.avoidedPmGramsPerWeek.value !== null
                     ? `${impactEstimate.avoidedPmGramsPerWeek.value} ${impactEstimate.avoidedPmGramsPerWeek.unit}`
                     : impactEstimate.avoidedPmGramsPerWeek.unavailableReason}
                 </div>
+                <FactorBadge
+                  kind={impactEstimate.avoidedPmGramsPerWeek.kind}
+                  confidence={impactEstimate.avoidedPmGramsPerWeek.confidence}
+                  compact
+                />
               </div>
-              <div className="bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                <div className="text-slate-500 mb-0.5">Exposure Drop</div>
+              <div className="bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700 space-y-1.5">
+                <div className="text-slate-500">Exposure Drop</div>
                 <div className="font-bold text-slate-900 dark:text-slate-100">
                   {impactEstimate.householdExposureReductionPct.value !== null
                     ? `${impactEstimate.householdExposureReductionPct.value} ${impactEstimate.householdExposureReductionPct.unit}`
                     : impactEstimate.householdExposureReductionPct.unavailableReason}
                 </div>
+                <FactorBadge
+                  kind={impactEstimate.householdExposureReductionPct.kind}
+                  confidence={impactEstimate.householdExposureReductionPct.confidence}
+                  compact
+                />
+                {impactEstimate.householdExposureReductionPct.baseline && (
+                  <div className="text-[10px] text-slate-500">
+                    Baseline:{' '}
+                    {impactEstimate.householdExposureReductionPct.baseline === 'cooking_pm25'
+                      ? 'Cooking PM2.5'
+                      : 'Indoor PM2.5'}
+                  </div>
+                )}
               </div>
             </div>
 
-            {impactEstimate.avoidedCo2eKgPerWeek.sourceCitation && (
-              <p className="text-slate-500">
-                <strong>Citation:</strong> {impactEstimate.avoidedCo2eKgPerWeek.sourceCitation}
-              </p>
+            {uniqueCitations.length > 0 && (
+              <div className="text-slate-600 dark:text-slate-300 space-y-1">
+                <strong>Citations:</strong>
+                <ul className="list-disc list-inside space-y-0.5">
+                  {uniqueCitations.map((cit, idx) => (
+                    <li key={idx}>{cit}</li>
+                  ))}
+                </ul>
+              </div>
             )}
-            {impactEstimate.avoidedCo2eKgPerWeek.assumptions.length > 0 && (
-              <ul className="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-400">
-                {impactEstimate.avoidedCo2eKgPerWeek.assumptions.map((asm, idx) => (
-                  <li key={idx}>{asm}</li>
-                ))}
-              </ul>
+            {uniqueNotes.length > 0 && (
+              <div className="text-slate-600 dark:text-slate-300 space-y-1">
+                <strong>Methodology &amp; Stand-in Notes:</strong>
+                <ul className="list-disc list-inside space-y-0.5">
+                  {uniqueNotes.map((note, idx) => (
+                    <li key={idx}>{note}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {uniqueAssumptions.length > 0 && (
+              <div className="space-y-1">
+                <strong>Assumptions:</strong>
+                <ul className="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-400">
+                  {uniqueAssumptions.map((asm, idx) => (
+                    <li key={idx}>{asm}</li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
         )}
@@ -191,7 +261,7 @@ export const PlanView: React.FC<PlanViewProps> = ({ plan, profile, language }) =
   };
 
   return (
-    <main id="main-content" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+    <main id="main-content" tabIndex={-1} className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 focus:outline-none">
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
           <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 mb-2">

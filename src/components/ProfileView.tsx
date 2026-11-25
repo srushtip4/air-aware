@@ -33,7 +33,11 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   };
 
   return (
-    <main id="main-content" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 focus:outline-none"
+    >
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-200 dark:border-slate-800 space-y-6">
         <div className="flex items-center gap-3 pb-6 border-b border-slate-100 dark:border-slate-800">
           <div className="w-12 h-12 bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center">

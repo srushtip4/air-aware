@@ -25,21 +25,21 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
               {t.tagline}. Powered by Open-Meteo Air Quality &amp; Geocoding APIs and Google Gemini.
             </p>
           </div>
-          <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700">
+          <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700">
             <Sparkles className="w-4 h-4 text-amber-400" aria-hidden="true" />
-            <span>CPCB NAQI Standard &amp; Sourced Emission Factors</span>
+            <span>CPCB NAQI Standard &amp; Transparent Impact Factors</span>
           </div>
         </div>
 
         <div className="bg-slate-950/60 p-5 rounded-2xl border border-slate-800/80 flex items-start gap-3">
           <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" aria-hidden="true" />
-          <p className="text-xs text-slate-400 leading-relaxed">
-            <strong className="text-slate-300">Disclaimer: </strong>
+          <p className="text-xs text-slate-300 leading-relaxed">
+            <strong className="text-slate-100">Disclaimer: </strong>
             {MEDICAL_DISCLAIMER}
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 pt-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-300 pt-4">
           <p>© {new Date().getFullYear()} AirAware. All rights reserved.</p>
           <p className="mt-2 sm:mt-0">Built for families navigating winter smog and urban air pollution.</p>
         </div>

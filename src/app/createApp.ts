@@ -1,3 +1,4 @@
+import compression from 'compression';
 import express from 'express';
 import type { NextFunction, Request, Response } from 'express';
 import type {
@@ -97,7 +98,10 @@ export function createAirAwareApp(options: CreateAppOptions = {}) {
 
   const app = express();
   app.disable('x-powered-by');
+  // Trust the single immediate reverse proxy hop (Cloud Run / Nginx / Render) so req.ip
+  // uses X-Forwarded-For without trusting arbitrary client-spoofed proxy chains.
   app.set('trust proxy', 1);
+  app.use(compression());
   app.use(securityHeadersMiddleware);
   app.use(express.json({ limit: '32kb' }));
 

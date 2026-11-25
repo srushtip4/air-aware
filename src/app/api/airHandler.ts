@@ -96,6 +96,7 @@ export function createAirHandler(deps: AirHandlerDeps) {
       );
 
       const cacheStatus: CacheStatus = aqiCached.status;
+      const isStale = cacheStatus === 'stale_on_error';
 
       deps.logger.log({
         level: 'info',
@@ -111,6 +112,9 @@ export function createAirHandler(deps: AirHandlerDeps) {
         reading: aqiCached.value,
         locations,
         cacheStatus,
+        isStale,
+        cachedAt: new Date(aqiCached.cachedAt).toISOString(),
+        expiresAt: new Date(aqiCached.expiresAt).toISOString(),
       });
     } catch (err) {
       deps.logger.log({

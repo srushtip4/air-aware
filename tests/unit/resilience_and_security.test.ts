@@ -157,6 +157,31 @@ describe('Security helpers, coarse privacy, and cache key hashing', () => {
     limiter.clear();
   });
 
+  it('evicts expired entries automatically and bounds memory at maxEntries', () => {
+    let clock = 1_000;
+    const limiter = new PerInstanceIpRateLimiter({
+      windowMs: 500,
+      maxRequests: 2,
+      maxEntries: 3,
+      now: () => clock,
+    });
+
+    limiter.check('10.0.0.1');
+    limiter.check('10.0.0.2');
+    limiter.check('10.0.0.3');
+    expect(limiter.size()).toBe(3);
+
+    // Adding a 4th active IP within window evicts oldest entry so size stays bounded at maxEntries
+    limiter.check('10.0.0.4');
+    expect(limiter.size()).toBe(3);
+
+    // Advance past windowMs: next check triggers automatic pruneExpired(), leaving only the new IP
+    clock += 600;
+    limiter.check('10.0.0.5');
+    expect(limiter.size()).toBe(1);
+    limiter.clear();
+  });
+
   it('defines strict security headers and redacts secrets in server logs', () => {
     expect(SECURITY_HEADERS['X-Content-Type-Options']).toBe('nosniff');
     expect(SECURITY_HEADERS['Content-Security-Policy']).toContain("default-src 'self'");

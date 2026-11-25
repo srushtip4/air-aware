@@ -1,8 +1,11 @@
+import http from 'node:http';
 import type { AddressInfo } from 'node:net';
+import zlib from 'node:zlib';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createAirAwareApp } from '../../src/app/createApp';
 import type { StructuredGeminiClient } from '../../src/lib/ai';
 import { DemoAirQualityAdapter } from '../../src/lib/aqi';
+import { TtlCache } from '../../src/lib/cache';
 import { loadEnvConfig } from '../../src/lib/config';
 import { CircuitBreaker } from '../../src/lib/resilience';
 import {
@@ -461,5 +464,173 @@ describe('AirAware API Routes', () => {
     expect(r3.status).toBe(429);
     expect(r3.headers.get('retry-after')).toBeTruthy();
     expect(r3.headers.get('x-ratelimit-remaining')).toBe('0');
+  });
+
+  it('uses Express trust proxy for X-Forwarded-For per-IP rate limiting and serves gzip-compressed JSON', async () => {
+    const strictGeneralLimiter = new PerInstanceIpRateLimiter({
+      windowMs: 60_000,
+      maxRequests: 1,
+    });
+    const srv = await startTestServer({
+      generalRateLimiter: strictGeneralLimiter,
+    });
+    serversToClose.push(srv.close);
+
+    // First client IP succeeds, second request from same forwarded IP is rate-limited
+    const ip1First = await fetch(`${srv.baseUrl}/api/plan`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Forwarded-For': '203.0.113.10',
+      },
+      body: JSON.stringify({
+        aqi: 320,
+        trend: 'worsening',
+        profile: sampleProfile,
+      }),
+    });
+    expect(ip1First.status).toBe(200);
+
+    const ip1Second = await fetch(`${srv.baseUrl}/api/plan`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Forwarded-For': '203.0.113.10',
+      },
+      body: JSON.stringify({
+        aqi: 320,
+        trend: 'worsening',
+        profile: sampleProfile,
+      }),
+    });
+    expect(ip1Second.status).toBe(429);
+
+    // Different forwarded IP behind proxy gets its own rate-limit bucket + gzip compression
+    const planPayload = JSON.stringify({
+      aqi: 320,
+      trend: 'worsening',
+      profile: sampleProfile,
+    });
+    const gzipResult = await new Promise<{
+      statusCode: number | undefined;
+      contentEncoding: string | undefined;
+      decodedBody: string;
+    }>((resolve, reject) => {
+      const url = new URL(`${srv.baseUrl}/api/plan`);
+      const req = http.request(
+        {
+          hostname: url.hostname,
+          port: url.port,
+          path: url.pathname,
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(planPayload),
+            'Accept-Encoding': 'gzip',
+            'X-Forwarded-For': '203.0.113.99',
+          },
+        },
+        (res) => {
+          const chunks: Buffer[] = [];
+          res.on('data', (chunk: Buffer) => chunks.push(chunk));
+          res.on('end', () => {
+            const raw = Buffer.concat(chunks);
+            const encoding = res.headers['content-encoding'];
+            const decoded =
+              encoding === 'gzip'
+                ? zlib.gunzipSync(raw).toString('utf8')
+                : raw.toString('utf8');
+            resolve({
+              statusCode: res.statusCode,
+              contentEncoding: encoding,
+              decodedBody: decoded,
+            });
+          });
+        },
+      );
+      req.on('error', reject);
+      req.write(planPayload);
+      req.end();
+    });
+
+    expect(gzipResult.statusCode).toBe(200);
+    expect(gzipResult.contentEncoding).toBe('gzip');
+    expect(JSON.parse(gzipResult.decodedBody)).toHaveProperty('plan');
+  });
+
+  it('GET /api/air reports isStale=false for fresh live/demo data and isStale=true when serving expired stale cache', async () => {
+    let clock = 1_000_000;
+    let shouldFail = false;
+    const demo = new DemoAirQualityAdapter(() => new Date(clock));
+    const flakyAdapter: AirQualityDataAdapter = {
+      sourceName: 'Open-Meteo Air Quality API',
+      searchLocations: async (q, limit) => demo.searchLocations(q, limit),
+      getAirQuality: async (lat, lon, locationName) => {
+        if (shouldFail) {
+          throw new Error('Upstream timeout');
+        }
+        const r = await demo.getAirQuality(lat, lon, locationName);
+        return { ...r, isDemoData: false, source: 'Open-Meteo Air Quality API' };
+      },
+    };
+
+    const aqiCache = new TtlCache<AirQualityReading>({
+      ttlMs: 1_000,
+      staleWhileErrorMs: 10_000,
+      now: () => clock,
+    });
+    const geocodeCache = new TtlCache<GeocodedLocation[]>({
+      ttlMs: 60_000,
+      staleWhileErrorMs: 60_000,
+      now: () => clock,
+    });
+
+    const srv = await startTestServer({
+      liveAdapter: flakyAdapter,
+      aqiCache,
+      geocodeCache,
+    });
+    serversToClose.push(srv.close);
+
+    // 1. Fresh live fetch
+    const freshRes = await fetch(`${srv.baseUrl}/api/air?q=Kanpur`);
+    expect(freshRes.status).toBe(200);
+    const freshJson = (await freshRes.json()) as {
+      isStale: boolean;
+      cacheStatus: string;
+      cachedAt: string;
+      expiresAt: string;
+      reading: AirQualityReading;
+    };
+    expect(freshJson.isStale).toBe(false);
+    expect(freshJson.reading.isDemoData).toBe(false);
+    expect(freshJson.cachedAt).toBeTruthy();
+    expect(freshJson.expiresAt).toBeTruthy();
+
+    // 2. Demo fetch
+    const demoRes = await fetch(`${srv.baseUrl}/api/air?q=Kanpur&demo=true`);
+    expect(demoRes.status).toBe(200);
+    const demoJson = (await demoRes.json()) as {
+      isStale: boolean;
+      reading: AirQualityReading;
+    };
+    expect(demoJson.isStale).toBe(false);
+    expect(demoJson.reading.isDemoData).toBe(true);
+
+    // 3. Advance past TTL and simulate upstream failure -> stale_on_error with isStale=true
+    clock += 2_000;
+    shouldFail = true;
+    const staleRes = await fetch(`${srv.baseUrl}/api/air?q=Kanpur`);
+    expect(staleRes.status).toBe(200);
+    const staleJson = (await staleRes.json()) as {
+      isStale: boolean;
+      cacheStatus: string;
+      cachedAt: string;
+      reading: AirQualityReading;
+    };
+    expect(staleJson.cacheStatus).toBe('stale_on_error');
+    expect(staleJson.isStale).toBe(true);
+    expect(staleJson.reading.isDemoData).toBe(false);
+    expect(staleJson.cachedAt).toBeTruthy();
   });
 });

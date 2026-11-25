@@ -23,17 +23,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run security dependency audit
-        run: npm audit --audit-level=high
-
       - name: Run linter
         run: npm run lint
 
       - name: Run TypeScript typecheck
         run: npm run typecheck
 
-      - name: Run unit and integration tests with coverage
+      - name: Run unit, API, and component tests with coverage
         run: npm run test:coverage
 
       - name: Build application bundle
         run: npm run build
+
+      - name: Verify built HTTP server, demo mode, 400 validation, 429 rate-limit, and security headers
+        run: npm run verify:http
+
+      - name: Install Playwright Chromium browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright E2E and axe-core accessibility suite
+        run: npm run test:e2e
+
+      - name: Run security dependency audit
+        run: npm audit --audit-level=high

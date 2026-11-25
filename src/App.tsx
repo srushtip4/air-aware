@@ -21,11 +21,35 @@ import { generateRecommendations } from './lib/recommendations';
 import type { Language } from './i18n/translations';
 import type { AirQualityReading, RecommendationPlan, UserProfile } from './types';
 
+interface AirCacheMeta {
+  isStale: boolean;
+  cachedAt: string | null;
+  expiresAt: string | null;
+}
+
+const DEFAULT_CLIENT_STALE_MS = 10 * 60_000;
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
   const [language, setLanguage] = useState<Language>('en');
   const [profile, setProfile] = useState<UserProfile>(loadStoredProfile);
   const [reading, setReading] = useState<AirQualityReading | null>(loadStoredReading);
+  const [airMeta, setAirMeta] = useState<AirCacheMeta>(() => {
+    const stored = loadStoredReading();
+    if (!stored || stored.isDemoData) {
+      return { isStale: false, cachedAt: null, expiresAt: null };
+    }
+    const tsMs = Date.parse(stored.timestamp);
+    const isOlderThanTtl =
+      Number.isFinite(tsMs) && Date.now() - tsMs > DEFAULT_CLIENT_STALE_MS;
+    return {
+      isStale: isOlderThanTtl,
+      cachedAt: stored.timestamp,
+      expiresAt: Number.isFinite(tsMs)
+        ? new Date(tsMs + DEFAULT_CLIENT_STALE_MS).toISOString()
+        : null,
+    };
+  });
   const [isDemoMode, setIsDemoMode] = useState<boolean>(loadStoredDemoMode);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +64,29 @@ export default function App() {
     return null;
   });
 
+  const applyReadingResponse = (data: {
+    reading: AirQualityReading;
+    cacheStatus?: string;
+    isStale?: boolean;
+    cachedAt?: string;
+    expiresAt?: string;
+  }) => {
+    setReading(data.reading);
+    saveStoredReading(data.reading);
+    setAirMeta({
+      isStale: Boolean(data.isStale || data.cacheStatus === 'stale_on_error'),
+      cachedAt: data.cachedAt ?? data.reading.timestamp,
+      expiresAt: data.expiresAt ?? null,
+    });
+
+    const generatedPlan = generateRecommendations({
+      band: data.reading.band,
+      trend: data.reading.trend.trend,
+      profile,
+    });
+    setPlan(generatedPlan);
+  };
+
   const fetchAirQuality = async (cityNameOrQuery: string, demo: boolean) => {
     setIsLoading(true);
     setError(null);
@@ -49,16 +96,14 @@ export default function App() {
       if (!res.ok) {
         throw new Error('Failed to fetch air quality data');
       }
-      const data = (await res.json()) as { reading: AirQualityReading };
-      setReading(data.reading);
-      saveStoredReading(data.reading);
-
-      const generatedPlan = generateRecommendations({
-        band: data.reading.band,
-        trend: data.reading.trend.trend,
-        profile,
-      });
-      setPlan(generatedPlan);
+      const data = (await res.json()) as {
+        reading: AirQualityReading;
+        cacheStatus?: string;
+        isStale?: boolean;
+        cachedAt?: string;
+        expiresAt?: string;
+      };
+      applyReadingResponse(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Network error');
     } finally {
@@ -75,16 +120,14 @@ export default function App() {
       if (!res.ok) {
         throw new Error('Failed to fetch air quality data');
       }
-      const data = (await res.json()) as { reading: AirQualityReading };
-      setReading(data.reading);
-      saveStoredReading(data.reading);
-
-      const generatedPlan = generateRecommendations({
-        band: data.reading.band,
-        trend: data.reading.trend.trend,
-        profile,
-      });
-      setPlan(generatedPlan);
+      const data = (await res.json()) as {
+        reading: AirQualityReading;
+        cacheStatus?: string;
+        isStale?: boolean;
+        cachedAt?: string;
+        expiresAt?: string;
+      };
+      applyReadingResponse(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Network error');
     } finally {
@@ -110,6 +153,13 @@ export default function App() {
     saveStoredDemoMode(demo);
   };
 
+  const isExpiredOnClient =
+    airMeta.expiresAt !== null && Date.now() > Date.parse(airMeta.expiresAt);
+  const isDemoReading = Boolean(reading?.isDemoData);
+  const isStaleReading = Boolean(
+    reading && !reading.isDemoData && (airMeta.isStale || isExpiredOnClient),
+  );
+
   return (
     <ErrorBoundary>
       <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-500 selection:text-white">
@@ -121,7 +171,9 @@ export default function App() {
         />
 
         <FallbackBanner
-          isCached={false}
+          isDemo={isDemoReading}
+          isStale={isStaleReading}
+          lastUpdated={airMeta.cachedAt ?? reading?.timestamp ?? null}
           isFallback={false}
           language={language}
         />

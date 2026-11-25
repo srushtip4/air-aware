@@ -182,12 +182,20 @@ export interface RecommendationPlan {
   generatedAt: string;
 }
 
+export type FactorKind = 'sourced' | 'assumption' | 'proxy';
+export type FactorConfidence = 'high' | 'medium' | 'low';
+export type ExposureBaseline = 'indoor_pm25' | 'cooking_pm25';
+
 export interface ImpactMetricResult {
   value: number | null;
   unit: string;
+  kind: FactorKind;
+  confidence: FactorConfidence;
   assumptions: string[];
   isEstimate: true;
   sourceCitation?: string;
+  note?: string;
+  baseline?: ExposureBaseline;
   unavailableReason?: string;
 }
 
@@ -213,6 +221,7 @@ export interface ImpactReport {
     avoidedCo2eKg: ImpactMetricResult;
     avoidedPmGrams: ImpactMetricResult;
     combinedExposureReductionPct: ImpactMetricResult;
+    cookingExposureReductionPct?: ImpactMetricResult;
   };
   communityProjection: CommunityProjection;
 }

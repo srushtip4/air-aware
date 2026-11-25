@@ -20,18 +20,18 @@ export const PrintablePlanView: React.FC<PrintablePlanViewProps> = ({
 
   if (!plan) {
     return (
-      <main id="main-content" className="max-w-4xl mx-auto px-4 py-16 text-center">
-        <p className="text-slate-500">No plan available to print.</p>
+      <main id="main-content" tabIndex={-1} className="max-w-4xl mx-auto px-4 py-16 text-center focus:outline-none">
+        <p className="text-slate-600 dark:text-slate-400">No plan available to print.</p>
       </main>
     );
   }
 
   return (
-    <main id="main-content" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <main id="main-content" tabIndex={-1} className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 focus:outline-none">
       <div className="flex items-center justify-between print:hidden bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.printableTitle}</h1>
-          <p className="text-xs text-slate-500">Optimized for printing and family posting.</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Optimized for printing and family posting.</p>
         </div>
         <button
           onClick={() => window.print()}
@@ -51,7 +51,7 @@ export const PrintablePlanView: React.FC<PrintablePlanViewProps> = ({
             </div>
             <p className="text-sm text-slate-600">{t.tagline}</p>
           </div>
-          <div className="text-right text-xs text-slate-500">
+          <div className="text-right text-xs text-slate-600">
             <div><strong>Location:</strong> {reading?.locationName ?? profile.locationQuery}</div>
             <div><strong>AQI Band:</strong> {plan.band} ({reading?.aqi ?? 'N/A'})</div>
             <div><strong>Date:</strong> {new Date().toLocaleDateString()}</div>
@@ -113,7 +113,7 @@ export const PrintablePlanView: React.FC<PrintablePlanViewProps> = ({
           </section>
         </div>
 
-        <div className="pt-6 border-t border-slate-200 text-xs text-slate-500 text-center">
+        <div className="pt-6 border-t border-slate-200 text-xs text-slate-600 text-center">
           <p>{plan.medicalDisclaimer}</p>
           <p className="mt-1">AirAware • Zero Cost Winter Smog Assistant</p>
         </div>
