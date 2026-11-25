@@ -1,0 +1,6 @@
+{
+  "name": "AirAware",
+  "description": "GenAI-powered assistant helping families and communities navigate severe winter smog and urban air pollution with low-emission daily routines, indoor air quality hacks, and sustainable alternatives.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

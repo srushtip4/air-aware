@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript"],
+  "rules": {
+    "typescript/no-explicit-any": "error",
+    "no-unused-vars": "error",
+    "eqeqeq": "error",
+    "no-var": "error",
+    "prefer-const": "error"
+  }
+}
