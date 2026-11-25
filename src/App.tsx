@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { FallbackBanner } from './components/FallbackBanner';
 import { Navbar, type ActiveTab } from './components/Navbar';
@@ -13,9 +13,12 @@ import {
   loadStoredDemoMode,
   loadStoredProfile,
   loadStoredReading,
+  loadStoredTheme,
   saveStoredDemoMode,
   saveStoredProfile,
   saveStoredReading,
+  saveStoredTheme,
+  type ThemeMode,
 } from './lib/storage';
 import { generateRecommendations } from './lib/recommendations';
 import type { Language } from './i18n/translations';
@@ -32,6 +35,7 @@ const DEFAULT_CLIENT_STALE_MS = 10 * 60_000;
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
   const [language, setLanguage] = useState<Language>('en');
+  const [theme, setTheme] = useState<ThemeMode>(loadStoredTheme);
   const [profile, setProfile] = useState<UserProfile>(loadStoredProfile);
   const [reading, setReading] = useState<AirQualityReading | null>(loadStoredReading);
   const [airMeta, setAirMeta] = useState<AirCacheMeta>(() => {
@@ -63,6 +67,20 @@ export default function App() {
     }
     return null;
   });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle('dark', theme === 'dark');
+    root.style.colorScheme = theme;
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    setTheme((prev) => {
+      const next: ThemeMode = prev === 'dark' ? 'light' : 'dark';
+      saveStoredTheme(next);
+      return next;
+    });
+  };
 
   const applyReadingResponse = (data: {
     reading: AirQualityReading;
@@ -162,12 +180,14 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-500 selection:text-white">
+      <div className="min-h-screen flex flex-col bg-[#F4F7F6] dark:bg-[#090F12] text-slate-900 dark:text-slate-100 dark:tracking-[0.01em] font-sans selection:bg-teal-700 selection:text-white transition-colors">
         <Navbar
           activeTab={activeTab}
           onTabChange={setActiveTab}
           language={language}
           onLanguageChange={setLanguage}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
         />
 
         <FallbackBanner

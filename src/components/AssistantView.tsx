@@ -216,30 +216,28 @@ export const AssistantView: React.FC<AssistantViewProps> = ({
     <main
       id="main-content"
       tabIndex={-1}
-      className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 focus:outline-none"
+      className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 focus:outline-none"
     >
       <div role="status" aria-live="polite" className="sr-only">
         {liveAnnouncement}
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-md">
-            <Bot className="w-6 h-6" aria-hidden="true" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
-              {t.assistantTitle}
-            </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              {t.assistantSubtitle}
-            </p>
-          </div>
+      <div className="bg-white dark:bg-[#111A1E] rounded-2xl p-6 shadow-sm border border-[#D5DFDC] dark:border-[#22323A] flex items-center gap-3.5">
+        <div className="w-11 h-11 bg-teal-700 text-white rounded-xl flex items-center justify-center shrink-0">
+          <Bot className="w-5 h-5" aria-hidden="true" />
+        </div>
+        <div>
+          <h1 className="font-display text-2xl font-bold text-slate-900 dark:text-slate-100">
+            {t.assistantTitle}
+          </h1>
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            {t.assistantSubtitle}
+          </p>
         </div>
       </div>
 
       {fallbackNotice && (
-        <div className="rounded-2xl overflow-hidden border border-amber-200 dark:border-amber-900/60">
+        <div className="rounded-xl overflow-hidden border border-amber-300 dark:border-amber-800/70">
           <FallbackBanner
             isFallback={true}
             fallbackReason={fallbackNotice}
@@ -248,8 +246,8 @@ export const AssistantView: React.FC<AssistantViewProps> = ({
         </div>
       )}
 
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 dark:border-slate-800 space-y-6 min-h-[500px] flex flex-col justify-between">
-        <div className="space-y-6 overflow-y-auto max-h-[600px] pr-2">
+      <div className="bg-white dark:bg-[#111A1E] rounded-2xl p-5 sm:p-6 shadow-sm border border-[#D5DFDC] dark:border-[#22323A] space-y-6 min-h-[480px] flex flex-col justify-between">
+        <div className="space-y-5 overflow-y-auto max-h-[600px] pr-1">
           {messages.map((msg) => {
             const isUser = msg.sender === 'user';
 
@@ -259,24 +257,24 @@ export const AssistantView: React.FC<AssistantViewProps> = ({
                 className={`flex items-start gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
               >
                 <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
                     isUser
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400'
+                      ? 'bg-teal-700 text-white'
+                      : 'bg-[#ECF1EF] dark:bg-[#162228] text-teal-800 dark:text-teal-300'
                   }`}
                 >
                   {isUser ? (
-                    <User className="w-5 h-5" aria-hidden="true" />
+                    <User className="w-4 h-4" aria-hidden="true" />
                   ) : (
-                    <Bot className="w-5 h-5" aria-hidden="true" />
+                    <Bot className="w-4 h-4" aria-hidden="true" />
                   )}
                 </div>
 
                 <div
-                  className={`max-w-xl p-5 rounded-2xl space-y-3 ${
+                  className={`max-w-xl p-4 sm:p-5 rounded-2xl space-y-3 ${
                     isUser
-                      ? 'bg-blue-700 text-white rounded-tr-none'
-                      : 'bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-tl-none'
+                      ? 'bg-teal-700 text-white rounded-tr-none'
+                      : 'bg-[#ECF1EF] dark:bg-[#162228] text-slate-900 dark:text-slate-100 rounded-tl-none'
                   }`}
                 >
                   {isUser ? (
@@ -284,14 +282,14 @@ export const AssistantView: React.FC<AssistantViewProps> = ({
                   ) : (
                     <div className="space-y-3 text-sm">
                       {msg.isFallback && (
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-200 text-xs font-bold border border-amber-300 dark:border-amber-800">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950/70 text-amber-950 dark:text-amber-200 text-xs font-bold border border-amber-300 dark:border-amber-800">
                           <WifiOff className="w-3.5 h-3.5" aria-hidden="true" />
                           <span>AI unavailable • Rule-based plan</span>
                         </div>
                       )}
                       <div className="flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" aria-hidden="true" />
-                        <h2 className="font-bold text-base">
+                        <h2 className="font-display font-bold text-base">
                           {(msg.content as GeminiStructuredExplanation).headline}
                         </h2>
                       </div>
@@ -299,32 +297,33 @@ export const AssistantView: React.FC<AssistantViewProps> = ({
                         {(msg.content as GeminiStructuredExplanation).summary}
                       </p>
 
-                      <div className="space-y-1.5 pt-2 border-t border-slate-200 dark:border-slate-700">
-                        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                      <div className="space-y-1.5 pt-2.5 border-t border-[#D5DFDC] dark:border-[#22323A]">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                           Key Focus Areas:
                         </h3>
-                        <ul className="list-disc list-inside space-y-1">
+                        <ul className="list-disc list-inside space-y-1 text-slate-700 dark:text-slate-300">
                           {(msg.content as GeminiStructuredExplanation).dailyFocus.map((pt, idx) => (
-                            <li key={idx} className="text-xs">{pt}</li>
+                            <li key={idx} className="text-xs leading-relaxed">{pt}</li>
                           ))}
                         </ul>
                       </div>
 
-                      <div className="bg-white/80 dark:bg-slate-900/60 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/60 text-xs">
-                        <strong>Impact &amp; Safety: </strong>
+                      <div className="bg-white/90 dark:bg-[#111A1E] p-3 rounded-xl text-xs text-slate-700 dark:text-slate-300">
+                        <strong className="text-slate-900 dark:text-slate-100">Impact &amp; Safety: </strong>
                         {(msg.content as GeminiStructuredExplanation).impactExplanation}
-                        <div className="mt-1 text-slate-600 dark:text-slate-400 italic">
+                        <div className="mt-1 text-slate-600 dark:text-slate-400">
                           {(msg.content as GeminiStructuredExplanation).safetyReminder}
                         </div>
                       </div>
 
                       {(msg.content as GeminiStructuredExplanation).followUpSuggestions.length > 0 && (
-                        <div className="flex flex-wrap gap-2 pt-2">
+                        <div className="flex flex-wrap gap-2 pt-1">
                           {(msg.content as GeminiStructuredExplanation).followUpSuggestions.map((sug, idx) => (
                             <button
                               key={idx}
+                              type="button"
                               onClick={(e) => handleSendMessage(e, sug)}
-                              className="px-3 py-1 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900 text-xs font-semibold rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="px-3 py-1.5 bg-white dark:bg-[#111A1E] text-teal-800 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-[#1E2E35] border border-[#D5DFDC] dark:border-[#22323A] text-xs font-semibold rounded-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:focus-visible:ring-teal-400"
                             >
                               {sug}
                             </button>
@@ -335,7 +334,7 @@ export const AssistantView: React.FC<AssistantViewProps> = ({
                   )}
 
                   <div
-                    className={`text-[10px] text-right ${
+                    className={`font-mono tabular-nums text-[10px] text-right ${
                       isUser ? 'text-white' : 'text-slate-600 dark:text-slate-400'
                     }`}
                   >
@@ -347,9 +346,9 @@ export const AssistantView: React.FC<AssistantViewProps> = ({
           })}
 
           {isLoading && (
-            <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
-              <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center animate-spin">
-                <RefreshCw className="w-5 h-5 text-blue-600" aria-hidden="true" />
+            <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300">
+              <div className="w-9 h-9 bg-[#ECF1EF] dark:bg-[#162228] rounded-xl flex items-center justify-center animate-spin">
+                <RefreshCw className="w-4 h-4 text-teal-700 dark:text-teal-400" aria-hidden="true" />
               </div>
               <span className="text-sm font-medium">Assistant is thinking...</span>
             </div>
@@ -357,13 +356,13 @@ export const AssistantView: React.FC<AssistantViewProps> = ({
         </div>
 
         {error && (
-          <div role="alert" className="p-4 bg-red-50 dark:bg-red-950/40 border border-red-200 rounded-xl text-red-800 dark:text-red-200 text-xs flex items-center gap-2">
+          <div role="alert" className="p-3.5 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800/70 rounded-xl text-red-900 dark:text-red-200 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={(e) => handleSendMessage(e)} className="pt-4 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+        <form onSubmit={(e) => handleSendMessage(e)} className="pt-4 border-t border-[#D5DFDC] dark:border-[#22323A] flex flex-col sm:flex-row gap-3">
           <input
             type="text"
             value={inputQuery}
@@ -371,12 +370,12 @@ export const AssistantView: React.FC<AssistantViewProps> = ({
             placeholder={t.assistantPlaceholder}
             aria-label="Ask AirAware Assistant"
             disabled={isLoading}
-            className="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2.5 bg-[#F4F7F6] dark:bg-[#162228] border border-[#D5DFDC] dark:border-[#22323A] rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder-slate-600 dark:placeholder-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:focus-visible:ring-teal-400"
           />
           <button
             type="submit"
             disabled={isLoading || !inputQuery.trim()}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold rounded-xl shadow-md transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-teal-700 hover:bg-teal-800 disabled:opacity-50 text-white text-sm font-semibold rounded-xl whitespace-nowrap transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:focus-visible:ring-teal-400"
           >
             <Send className="w-4 h-4" aria-hidden="true" />
             <span>{t.sendButton}</span>

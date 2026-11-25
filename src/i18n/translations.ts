@@ -70,6 +70,10 @@ export const translations = {
     notFoundHeading: 'Page Not Found',
     notFoundBody: 'The page you requested could not be found.',
     returnHome: 'Return to Live AQI',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    switchToDark: 'Switch to dark mode',
+    switchToLight: 'Switch to light mode',
   },
   hi: {
     appName: 'एयरअवेयर (AirAware)',
@@ -140,6 +144,10 @@ export const translations = {
     notFoundHeading: 'पृष्ठ नहीं मिला',
     notFoundBody: 'आप जिस पृष्ठ की तलाश कर رہے ہیں वो नहीं मिला।',
     returnHome: 'लाइव एक्यूआई पर लौटें',
+    themeLight: 'लाइट',
+    themeDark: 'डार्क',
+    switchToDark: 'डार्क मोड चालू करें',
+    switchToLight: 'लाइट मोड चालू करें',
   },
 } as const;
 

@@ -56,14 +56,14 @@ export const FallbackBanner: React.FC<FallbackBannerProps> = ({
     <aside
       aria-label="Data status notice"
       role="status"
-      className="bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200 dark:border-amber-900/60 px-4 py-3 text-sm text-amber-900 dark:text-amber-200"
+      className="bg-amber-50 dark:bg-amber-950/60 border-b border-amber-200 dark:border-amber-800/80 px-4 py-2.5 text-sm text-amber-950 dark:text-amber-100 transition-colors"
     >
       <div className="max-w-7xl mx-auto flex items-start sm:items-center gap-3">
-        <Icon className="w-5 h-5 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5 sm:mt-0" aria-hidden={true} />
-        <div className="flex-1">
-          <p className="font-semibold">{message}</p>
+        <Icon className="w-4 h-4 text-amber-800 dark:text-amber-300 shrink-0 mt-0.5 sm:mt-0" aria-hidden={true} />
+        <div className="flex-1 flex flex-col sm:flex-row sm:items-baseline sm:gap-2">
+          <p className="font-semibold text-xs sm:text-sm">{message}</p>
           {fallbackReason && (
-            <p className="text-xs text-amber-800 dark:text-amber-300 mt-0.5">
+            <p className="text-xs text-amber-900 dark:text-amber-200">
               {fallbackReason}
             </p>
           )}

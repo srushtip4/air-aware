@@ -12,9 +12,9 @@ export const NotFoundView: React.FC<NotFoundViewProps> = ({ onGoHome, language }
 
   return (
     <main id="main-content" tabIndex={-1} className="min-h-[70vh] flex items-center justify-center p-6 focus:outline-none">
-      <div className="max-w-md w-full bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 text-center space-y-6">
-        <div className="w-16 h-16 bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto">
-          <Compass className="w-8 h-8" aria-hidden="true" />
+      <div className="max-w-md w-full bg-white dark:bg-[#111A1E] p-8 rounded-2xl border border-[#D5DFDC] dark:border-[#22323A] text-center space-y-6">
+        <div className="w-14 h-14 bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 rounded-xl flex items-center justify-center mx-auto">
+          <Compass className="w-7 h-7" aria-hidden="true" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
@@ -25,8 +25,9 @@ export const NotFoundView: React.FC<NotFoundViewProps> = ({ onGoHome, language }
           </p>
         </div>
         <button
+          type="button"
           onClick={onGoHome}
-          className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-md transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white font-semibold rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:focus-visible:ring-teal-400"
         >
           <Home className="w-5 h-5" aria-hidden="true" />
           <span>{t.returnHome}</span>

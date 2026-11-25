@@ -39,13 +39,13 @@ npm run test:e2e          # Run Playwright E2E journey + 7 WCAG 2.1 AA axe-core 
 
 ## Measured Test Results & Coverage
 
-- **Vitest Suite (`npm run test:coverage`)**: **9 test files passed, 91 tests passed** (`tests/unit/*`, `tests/api/routes.test.ts`, `tests/component/ui.test.tsx`).
+- **Vitest Suite (`npm run test:coverage`)**: **9 test files passed, 92 tests passed** (`tests/unit/*`, `tests/api/routes.test.ts`, `tests/component/ui.test.tsx`).
 - **Vitest V8 Coverage** (`src/lib/**/*.ts`, excluding `src/lib/**/index.ts` and `src/lib/storage.ts`):
   - **Statements**: `94.36%`
   - **Branches**: `81.89%`
   - **Functions**: `95.42%`
   - **Lines**: `94.50%`
-- **Playwright E2E + Accessibility (`npm run test:e2e`)**: **1 E2E journey passed** in headless Chromium covering keyboard skip-link focus, `aria-live` announcements, city search, profile save, Clean-Air Plan drawer, Impact slider/table, `"AI unavailable"` fallback, Printable Plan, and **7 `axe-core` WCAG 2.1 AA checks** (0 violations).
+- **Playwright E2E + Accessibility (`npm run test:e2e`)**: **1 E2E journey passed** in headless Chromium covering keyboard skip-link focus, `aria-live` announcements, city search, hourly AQI chart rendering, profile save, Clean-Air Plan drawer, Impact slider/table, `"AI unavailable"` fallback, Printable Plan, Light/Dark theme toggle, and **13 `axe-core` WCAG 2.1 AA checks** (7 Light mode + 6 Dark mode, 0 violations).
 - **HTTP Verification (`npm run verify:http`)**: Verified built `dist-server/server.mjs` serving HTML (`200`), demo `/api/air` (`200`), validation failures (`400`), `/api/assist` rate limit (`429`), and security headers.
 
 ## Single-Host Free Deployment (One Node Service)

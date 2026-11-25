@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert, Sparkles } from 'lucide-react';
+import { ShieldAlert } from 'lucide-react';
 import { translations, type Language } from '../i18n/translations';
 import { MEDICAL_DISCLAIMER } from '../lib/recommendations';
 
@@ -11,37 +11,33 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
   const t = translations[language];
 
   return (
-    <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-slate-800">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-lg font-bold text-slate-100">{t.appName}</span>
-              <span className="text-xs bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full">
-                Zero Cost • Privacy First
-              </span>
-            </div>
-            <p className="text-sm text-slate-400 max-w-xl">
-              {t.tagline}. Powered by Open-Meteo Air Quality &amp; Geocoding APIs and Google Gemini.
+    <footer className="bg-[#ECF1EF] dark:bg-[#0D1519] text-slate-700 dark:text-slate-300 py-10 border-t border-[#D5DFDC] dark:border-[#22323A] mt-16 transition-colors print:hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 pb-6 border-b border-[#D5DFDC] dark:border-[#22323A]">
+          <div className="space-y-1">
+            <span className="font-display text-base font-bold text-slate-900 dark:text-slate-100">
+              {t.appName}
+            </span>
+            <p className="text-xs text-slate-600 dark:text-slate-400 max-w-xl">
+              {t.tagline}. Data sourced from Open-Meteo Air Quality &amp; Geocoding APIs and optional Google Gemini explanations.
             </p>
           </div>
-          <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700">
-            <Sparkles className="w-4 h-4 text-amber-400" aria-hidden="true" />
-            <span>CPCB NAQI Standard &amp; Transparent Impact Factors</span>
-          </div>
+          <p className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
+            CPCB NAQI Standard · Zero Cost · Device-Local Profiles
+          </p>
         </div>
 
-        <div className="bg-slate-950/60 p-5 rounded-2xl border border-slate-800/80 flex items-start gap-3">
-          <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" aria-hidden="true" />
-          <p className="text-xs text-slate-300 leading-relaxed">
-            <strong className="text-slate-100">Disclaimer: </strong>
+        <div className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+          <ShieldAlert className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5" aria-hidden="true" />
+          <p>
+            <strong className="text-slate-900 dark:text-slate-100">Disclaimer: </strong>
             {MEDICAL_DISCLAIMER}
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-300 pt-4">
-          <p>© {new Date().getFullYear()} AirAware. All rights reserved.</p>
-          <p className="mt-2 sm:mt-0">Built for families navigating winter smog and urban air pollution.</p>
+        <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600 dark:text-slate-400 pt-2">
+          <p>© {new Date().getFullYear()} AirAware</p>
+          <p className="mt-1 sm:mt-0">Built for families navigating winter smog and urban air pollution.</p>
         </div>
       </div>
     </footer>

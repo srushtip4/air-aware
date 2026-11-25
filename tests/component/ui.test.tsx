@@ -353,4 +353,80 @@ describe('AirAware UI Components & Accessibility (WCAG 2.1 AA)', () => {
       expect(screen.getByText(new RegExp(plan.dailyRoutine[0]!.title, 'i'))).toBeDefined();
     });
   });
+
+  describe('Light/Dark Theme Persistence & Hourly Trajectory Chart', () => {
+    beforeEach(() => {
+      localStorage.clear();
+      document.documentElement.classList.remove('dark');
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      document.documentElement.classList.remove('dark');
+    });
+
+    it('toggles dark mode on root documentElement and persists choice to localStorage', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () =>
+          new Response(
+            JSON.stringify({
+              reading: {
+                aqi: 210,
+                pm25: 94,
+                pm10: 160,
+                no2: 35,
+                o3: 22,
+                band: 'Poor',
+                source: 'Open-Meteo Air Quality API',
+                timestamp: new Date().toISOString(),
+                isDemoData: false,
+                locationName: 'New Delhi, India',
+                latitude: 28.6139,
+                longitude: 77.209,
+                hourly: [
+                  { timestamp: '2026-11-25T06:00:00.000Z', aqi: 245, pm25: 104, pm10: 170 },
+                  { timestamp: '2026-11-25T07:00:00.000Z', aqi: 268, pm25: 112, pm10: 185 },
+                  { timestamp: '2026-11-25T08:00:00.000Z', aqi: 210, pm25: 94, pm10: 160 },
+                ],
+                trend: {
+                  trend: 'improving',
+                  delta: -35,
+                  percentChange: -14,
+                  windowHours: 3,
+                  summary: 'Improving',
+                },
+              },
+              cacheStatus: 'miss',
+              isStale: false,
+              cachedAt: new Date().toISOString(),
+              expiresAt: new Date(Date.now() + 600_000).toISOString(),
+            }),
+            { status: 200, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+
+      render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('img', { name: /Hourly AQI trajectory/i })).toBeDefined();
+      });
+
+      const themeBtn = screen.getByRole('button', { name: /Switch to dark mode/i });
+      expect(themeBtn.getAttribute('aria-pressed')).toBe('false');
+      expect(document.documentElement.classList.contains('dark')).toBe(false);
+
+      fireEvent.click(themeBtn);
+      expect(document.documentElement.classList.contains('dark')).toBe(true);
+      expect(localStorage.getItem('airaware_theme_v1')).toBe('dark');
+
+      const lightBtn = screen.getByRole('button', { name: /Switch to light mode/i });
+      expect(lightBtn.getAttribute('aria-pressed')).toBe('true');
+
+      fireEvent.click(lightBtn);
+      expect(document.documentElement.classList.contains('dark')).toBe(false);
+      expect(localStorage.getItem('airaware_theme_v1')).toBe('light');
+    });
+  });
 });

@@ -32,11 +32,11 @@ export class ErrorBoundary extends React.Component<
       return (
         <main
           role="main"
-          className="min-h-[60vh] flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-950"
+          className="min-h-[60vh] flex items-center justify-center p-6 bg-[#F4F7F6] dark:bg-[#090F12]"
         >
-          <div className="max-w-md w-full bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-xl border border-red-100 dark:border-red-900/40 text-center">
-            <div className="w-14 h-14 bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mx-auto mb-4">
-              <AlertTriangle className="w-7 h-7" aria-hidden="true" />
+          <div className="max-w-md w-full bg-white dark:bg-[#111A1E] p-8 rounded-2xl border border-[#D5DFDC] dark:border-[#22323A] text-center">
+            <div className="w-12 h-12 bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle className="w-6 h-6" aria-hidden="true" />
             </div>
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
               Something went wrong
@@ -47,7 +47,7 @@ export class ErrorBoundary extends React.Component<
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-md transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white font-semibold rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:focus-visible:ring-teal-400"
             >
               <RefreshCw className="w-4 h-4" aria-hidden="true" />
               Reload Application

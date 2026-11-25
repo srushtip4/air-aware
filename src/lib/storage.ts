@@ -86,6 +86,41 @@ export function loadStoredDemoMode(): boolean {
   }
 }
 
+export type ThemeMode = 'light' | 'dark';
+
+const THEME_STORAGE_KEY = 'airaware_theme_v1';
+
+export function loadStoredTheme(): ThemeMode {
+  try {
+    if (typeof window === 'undefined') {
+      return 'light';
+    }
+    const stored = localStorage.getItem(THEME_STORAGE_KEY);
+    if (stored === 'light' || stored === 'dark') {
+      return stored;
+    }
+    if (
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    ) {
+      return 'dark';
+    }
+  } catch {
+    // Fallback to light
+  }
+  return 'light';
+}
+
+export function saveStoredTheme(theme: ThemeMode): void {
+  try {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    }
+  } catch {
+    // ignore
+  }
+}
+
 export function saveStoredDemoMode(isDemo: boolean): void {
   try {
     if (typeof window !== 'undefined') {

@@ -163,5 +163,28 @@ test.describe('AirAware End-to-End Journey & WCAG 2.1 AA Checks', () => {
       page.getByRole('heading', { level: 1, name: /Family Clean-Air Plan/i }),
     ).toBeVisible();
     await expectNoAxeViolations(page, 'Printable Plan');
+
+    // Toggle Dark Mode and verify theme persistence + WCAG 2.1 AA compliance in Dark Mode across key views
+    const darkToggle = page.getByRole('button', { name: /Switch to dark mode/i });
+    await darkToggle.click();
+    await expect(page.locator('html')).toHaveClass(/dark/);
+    await expect(page.getByRole('button', { name: /Switch to light mode/i })).toHaveAttribute('aria-pressed', 'true');
+    await expectNoAxeViolations(page, 'Printable Plan (Dark Mode)');
+
+    await page.getByRole('button', { name: /Live AQI/i }).click();
+    await expect(page.getByRole('img', { name: /Hourly AQI trajectory/i })).toBeVisible();
+    await expectNoAxeViolations(page, 'Live AQI (Dark Mode)');
+
+    await page.getByRole('button', { name: /Impact & Community/i }).click();
+    await expectNoAxeViolations(page, 'Impact & Community (Dark Mode)');
+
+    await page.getByRole('button', { name: /Clean-Air Plan/i }).click();
+    await expectNoAxeViolations(page, 'Clean-Air Plan (Dark Mode)');
+
+    await page.getByRole('button', { name: /Household Profile/i }).click();
+    await expectNoAxeViolations(page, 'Household Profile (Dark Mode)');
+
+    await page.getByRole('button', { name: /AI Assistant/i }).click();
+    await expectNoAxeViolations(page, 'AI Assistant (Dark Mode)');
   });
 });

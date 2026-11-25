@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle2, UserCheck, Sliders } from 'lucide-react';
+import { CheckCircle2, Sliders } from 'lucide-react';
 import { translations, type Language } from '../i18n/translations';
 import type {
   BudgetTier,
@@ -15,6 +15,11 @@ interface ProfileViewProps {
   onSaveProfile: (profile: UserProfile) => void;
   language: Language;
 }
+
+const inputClasses =
+  'w-full px-3.5 py-2.5 bg-[#F4F7F6] dark:bg-[#162228] border border-[#D5DFDC] dark:border-[#22323A] rounded-xl text-sm text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:focus-visible:ring-teal-400 transition';
+
+const labelClasses = 'block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1.5';
 
 export const ProfileView: React.FC<ProfileViewProps> = ({
   profile,
@@ -36,38 +41,36 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
     <main
       id="main-content"
       tabIndex={-1}
-      className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 focus:outline-none"
+      className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 focus:outline-none"
     >
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-200 dark:border-slate-800 space-y-6">
-        <div className="flex items-center gap-3 pb-6 border-b border-slate-100 dark:border-slate-800">
-          <div className="w-12 h-12 bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center">
-            <UserCheck className="w-6 h-6" aria-hidden="true" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
-              {t.profileTitle}
-            </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              {t.profileSubtitle}
-            </p>
-          </div>
+      <div className="bg-white dark:bg-[#111A1E] rounded-2xl p-6 sm:p-8 shadow-sm border border-[#D5DFDC] dark:border-[#22323A] space-y-6">
+        <div className="pb-5 border-b border-[#D5DFDC] dark:border-[#22323A] space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-wider text-teal-800 dark:text-teal-300">
+            Local Device Storage · Zero Account Required
+          </p>
+          <h1 className="font-display text-2xl font-bold text-slate-900 dark:text-slate-100">
+            {t.profileTitle}
+          </h1>
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            {t.profileSubtitle}
+          </p>
         </div>
 
         {successMessage && (
           <div
             role="status"
             aria-live="polite"
-            className="bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-900/60 p-4 rounded-2xl flex items-center gap-3 text-emerald-800 dark:text-emerald-200"
+            className="bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/70 p-4 rounded-xl flex items-center gap-3 text-emerald-900 dark:text-emerald-200"
           >
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" />
+            <CheckCircle2 className="w-5 h-5 text-emerald-700 dark:text-emerald-300 shrink-0" aria-hidden="true" />
             <p className="text-sm font-semibold">{t.profileSavedSuccess}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label htmlFor="locationQuery" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="locationQuery" className={labelClasses}>
                 {t.locationLabel}
               </label>
               <input
@@ -76,12 +79,12 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 value={formState.locationQuery}
                 onChange={(e) => setFormState({ ...formState, locationQuery: e.target.value })}
                 required
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClasses}
               />
             </div>
 
             <div>
-              <label htmlFor="householdSize" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="householdSize" className={labelClasses}>
                 {t.householdSizeLabel}
               </label>
               <input
@@ -97,17 +100,17 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   })
                 }
                 required
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`${inputClasses} font-mono tabular-nums`}
               />
             </div>
           </div>
 
-          <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">
+          <div className="pt-5 border-t border-[#D5DFDC] dark:border-[#22323A] space-y-3">
+            <h2 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
               Vulnerable Household Members
             </h2>
-            <div className="space-y-3">
-              <label className="flex items-center gap-3 cursor-pointer">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <label className="flex items-center gap-3 p-3 rounded-xl bg-[#ECF1EF] dark:bg-[#162228] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={formState.household.hasChildren}
@@ -117,12 +120,12 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                       household: { ...formState.household, hasChildren: e.target.checked },
                     })
                   }
-                  className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                  className="w-4 h-4 accent-teal-700 dark:accent-teal-400 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
                 />
-                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t.hasChildrenLabel}</span>
+                <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{t.hasChildrenLabel}</span>
               </label>
 
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label className="flex items-center gap-3 p-3 rounded-xl bg-[#ECF1EF] dark:bg-[#162228] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={formState.household.hasElderly}
@@ -132,12 +135,12 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                       household: { ...formState.household, hasElderly: e.target.checked },
                     })
                   }
-                  className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                  className="w-4 h-4 accent-teal-700 dark:accent-teal-400 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
                 />
-                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t.hasElderlyLabel}</span>
+                <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{t.hasElderlyLabel}</span>
               </label>
 
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label className="flex items-center gap-3 p-3 rounded-xl bg-[#ECF1EF] dark:bg-[#162228] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={formState.household.hasRespiratoryCondition}
@@ -147,23 +150,23 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                       household: { ...formState.household, hasRespiratoryCondition: e.target.checked },
                     })
                   }
-                  className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                  className="w-4 h-4 accent-teal-700 dark:accent-teal-400 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
                 />
-                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t.hasRespiratoryCondition}</span>
+                <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{t.hasRespiratoryCondition}</span>
               </label>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="pt-5 border-t border-[#D5DFDC] dark:border-[#22323A] grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
-              <label htmlFor="commuteMode" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="commuteMode" className={labelClasses}>
                 {t.commuteModeLabel}
               </label>
               <select
                 id="commuteMode"
                 value={formState.commuteMode}
                 onChange={(e) => setFormState({ ...formState, commuteMode: e.target.value as CommuteMode })}
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClasses}
               >
                 <option value="car_petrol">Car (Petrol)</option>
                 <option value="car_diesel">Car (Diesel)</option>
@@ -177,7 +180,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             </div>
 
             <div>
-              <label htmlFor="commuteDistance" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="commuteDistance" className={labelClasses}>
                 {t.commuteDistanceLabel}
               </label>
               <input
@@ -187,12 +190,12 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 max={200}
                 value={formState.commuteDistanceKmOneWay}
                 onChange={(e) => setFormState({ ...formState, commuteDistanceKmOneWay: parseFloat(e.target.value) || 0 })}
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`${inputClasses} font-mono tabular-nums`}
               />
             </div>
 
             <div>
-              <label htmlFor="commuteDays" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="commuteDays" className={labelClasses}>
                 {t.commuteDaysLabel}
               </label>
               <input
@@ -202,21 +205,21 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 max={7}
                 value={formState.commuteDaysPerWeek}
                 onChange={(e) => setFormState({ ...formState, commuteDaysPerWeek: parseInt(e.target.value, 10) || 0 })}
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`${inputClasses} font-mono tabular-nums`}
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label htmlFor="cookingFuel" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="cookingFuel" className={labelClasses}>
                 {t.cookingFuelLabel}
               </label>
               <select
                 id="cookingFuel"
                 value={formState.cookingFuel}
                 onChange={(e) => setFormState({ ...formState, cookingFuel: e.target.value as CookingFuel })}
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClasses}
               >
                 <option value="lpg">LPG Cylinder / Gas</option>
                 <option value="electric_induction">Electric Induction</option>
@@ -227,14 +230,14 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             </div>
 
             <div>
-              <label htmlFor="heatingSource" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="heatingSource" className={labelClasses}>
                 {t.heatingSourceLabel}
               </label>
               <select
                 id="heatingSource"
                 value={formState.heatingSource}
                 onChange={(e) => setFormState({ ...formState, heatingSource: e.target.value as HeatingSource })}
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClasses}
               >
                 <option value="none">None / Not Needed</option>
                 <option value="electric_heater">Electric Heater / Radiator</option>
@@ -246,16 +249,16 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label htmlFor="homeType" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="homeType" className={labelClasses}>
                 {t.homeTypeLabel}
               </label>
               <select
                 id="homeType"
                 value={formState.homeType}
                 onChange={(e) => setFormState({ ...formState, homeType: e.target.value as HomeType })}
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClasses}
               >
                 <option value="apartment">Apartment / High-rise</option>
                 <option value="independent_house">Independent House / Villa</option>
@@ -265,14 +268,14 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             </div>
 
             <div>
-              <label htmlFor="budgetTier" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="budgetTier" className={labelClasses}>
                 {t.budgetTierLabel}
               </label>
               <select
                 id="budgetTier"
                 value={formState.budgetTier}
                 onChange={(e) => setFormState({ ...formState, budgetTier: e.target.value as BudgetTier })}
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClasses}
               >
                 <option value="zero_cost">Zero Cost (Free DIY &amp; Timing)</option>
                 <option value="low_cost">Low Cost (Weatherstripping &amp; DIY Box Fan)</option>
@@ -281,12 +284,12 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             </div>
           </div>
 
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+          <div className="pt-5 border-t border-[#D5DFDC] dark:border-[#22323A] flex justify-end">
             <button
               type="submit"
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-600/20 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white text-sm font-semibold rounded-xl whitespace-nowrap transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:focus-visible:ring-teal-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[#111A1E]"
             >
-              <Sliders className="w-5 h-5" aria-hidden="true" />
+              <Sliders className="w-4 h-4" aria-hidden="true" />
               <span>{t.saveProfile}</span>
             </button>
           </div>
